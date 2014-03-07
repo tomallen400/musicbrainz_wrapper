@@ -1,6 +1,6 @@
 class Musicbrainz::Recording
 	
-	attr_accessor :id, :title, :disambiguation, :score, :length, :video, :artist_credit, :releases, :tags
+	attr_accessor :id, :title, :disambiguation, :score, :length, :video, :artist_credit, :releases, :tags, :relations, :recording, :work
 	
 	def initialize args
 		args.each do |k, v|
@@ -10,9 +10,12 @@ class Musicbrainz::Recording
 	end
 	
 	def child_initializers
+		self.recording = Musicbrainz::Recording.new(self.recording) if self.recording
+		self.work = Musicbrainz::Work.new(self.work) if self.work
 		self.artists_initialize if self.artist_credit
 		self.tags_initialize if self.tags
 		self.releases_initialize if self.releases
+		self.relations_initialize if self.relations
 	end
 	
 	def artists_initialize
@@ -37,6 +40,14 @@ class Musicbrainz::Recording
 			array << Musicbrainz::Release.new(a)
 		end
 		self.releases = array
+	end
+	
+	def relations_initialize
+		array = []
+		self.relations.each do |a|
+			array << Musicbrainz::Relation.new(a)
+		end
+		self.relations = array
 	end
 	
 end

@@ -1,6 +1,6 @@
 class Musicbrainz::Release
 	
-	attr_accessor :id, :title, :score, :count, :status, :text_representation, :artist_credit, :release_group, :area, :date, :country, :release_events, :label_info, :barcode, :asin, :track_count, :media, :cover_art_archive, :quality
+	attr_accessor :id, :title, :score, :count, :status, :text_representation, :artist_credit, :release_group, :area, :date, :country, :release_events, :label_info, :barcode, :asin, :track_count, :media, :cover_art_archive, :quality, :relations
 	
 	def initialize args
 		args.each do |k, v|
@@ -18,6 +18,7 @@ class Musicbrainz::Release
 		self.media_initialize if self.media
 		self.label_info_initialize if self.label_info
 		self.release_events_initialize if self.release_events
+		self.relations_initialize if self.relations
 	end
 	
 	def artists_initialize
@@ -50,6 +51,14 @@ class Musicbrainz::Release
 			array << Musicbrainz::ReleaseEvent.new(a)
 		end
 		self.release_events = array
+	end
+	
+	def relations_initialize
+		array = []
+		self.relations.each do |a|
+			array << Musicbrainz::Relation.new(a)
+		end
+		self.relations = array
 	end
 	
 end

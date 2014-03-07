@@ -23,12 +23,12 @@ class Musicbrainz::Wrapper
 	
 	def artist(params)
 		# artist(:id => "id", :inc => {:isrcs => true, :artist-rels => true})
-		response = self.query(Musicbrainz::Wrapper.create_query_string('artist', params))
+		response = self.query(Musicbrainz::Wrapper.create_query_string('artist', params), :single)
 		Musicbrainz::Artist.new(response) if !response.nil?
 	end
 	
 	def artists(params)
-		response = self.query(Musicbrainz::Wrapper.create_query_string('artist', params))
+		response = self.query(Musicbrainz::Wrapper.create_query_string('artist', params), :multiple)
 		if !response.nil?
 			array = []
 			response.each do |a|
@@ -39,12 +39,12 @@ class Musicbrainz::Wrapper
 	end
 	
 	def label(params)
-		response = self.query(Musicbrainz::Wrapper.create_query_string('label', params))
+		response = self.query(Musicbrainz::Wrapper.create_query_string('label', params), :single)
 		Musicbrainz::Label.new(response) if !response.nil?
 	end
 	
 	def labels(params)
-		response = self.query(Musicbrainz::Wrapper.create_query_string('label', params))
+		response = self.query(Musicbrainz::Wrapper.create_query_string('label', params), :multiple)
 		if !response.nil?
 			array = []
 			response.each do |a|
@@ -55,12 +55,12 @@ class Musicbrainz::Wrapper
 	end
 	
 	def recording(params)
-		response = self.query(Musicbrainz::Wrapper.create_query_string('recording', params))
+		response = self.query(Musicbrainz::Wrapper.create_query_string('recording', params), :single)
 		Musicbrainz::Recording.new(response) if !response.nil?
 	end
 	
 	def recordings(params)
-		response = self.query(Musicbrainz::Wrapper.create_query_string('recording', params))
+		response = self.query(Musicbrainz::Wrapper.create_query_string('recording', params), :multiple)
 		if !response.nil?
 			array = []
 			response.each do |a|
@@ -71,12 +71,12 @@ class Musicbrainz::Wrapper
 	end
 	
 	def release(params)
-		response = self.query(Musicbrainz::Wrapper.create_query_string('release', params))
+		response = self.query(Musicbrainz::Wrapper.create_query_string('release', params), :single)
 		Musicbrainz::Release.new(response) if !response.nil?
 	end
 	
 	def releases(params)
-		response = self.query(Musicbrainz::Wrapper.create_query_string('release', params))
+		response = self.query(Musicbrainz::Wrapper.create_query_string('release', params), :multiple)
 		if !response.nil?
 			array = []
 			response.each do |a|
@@ -87,12 +87,12 @@ class Musicbrainz::Wrapper
 	end
 	
 	def release_group(params)
-		response = self.query(Musicbrainz::Wrapper.create_query_string('release-group', params))
+		response = self.query(Musicbrainz::Wrapper.create_query_string('release-group', params), :single)
 		Musicbrainz::ReleaseGroup.new(response) if !response.nil?
 	end
 	
 	def release_groups(params)
-		response = self.query(Musicbrainz::Wrapper.create_query_string('release-group', params))
+		response = self.query(Musicbrainz::Wrapper.create_query_string('release-group', params), :multiple)
 		if !response.nil?
 			array = []
 			response.each do |a|
@@ -103,12 +103,12 @@ class Musicbrainz::Wrapper
 	end
 	
 	def work(params)
-		response = self.query(Musicbrainz::Wrapper.create_query_string('work', params))
+		response = self.query(Musicbrainz::Wrapper.create_query_string('work', params), :single)
 		Musicbrainz::Work.new(response) if !response.nil?
 	end
 	
 	def works(params)
-		response = self.query(Musicbrainz::Wrapper.create_query_string('work', params))
+		response = self.query(Musicbrainz::Wrapper.create_query_string('work', params), :multiple)
 		if !response.nil?
 			array = []
 			response.each do |a|
@@ -175,10 +175,10 @@ class Musicbrainz::Wrapper
   end
 	
 	# Hit Musicbrainz API
-	def query(ending)
+	def query(ending, type)
   	query = @@api_url + ending
   	response = self.send_query(query)
-  	Musicbrainz::Wrapper.parse_response(response)
+  	Musicbrainz::Wrapper.parse_response(response, type)
   end
   
   def send_query(query)
@@ -189,21 +189,25 @@ class Musicbrainz::Wrapper
     http.request(request)
   end
   
-  def self.parse_response(response)
+  def self.parse_response(response, type)
 		if response.is_a?(Net::HTTPOK)
 			json = JSON.parse(response.body) rescue {}
-			if json["artist"]
-				json["artist"]
-			elsif json["labels"]
-				json["labels"]
-			elsif json["recording"]
-				json["recording"]
-			elsif json["releases"]
-				json["releases"]
-			elsif json["release-groups"]
-				json["release-groups"]
-			elsif json["work"]
-				json["work"]
+			if type == :multiple
+				if json["artist"]
+					json["artist"]
+				elsif json["labels"]
+					json["labels"]
+				elsif json["release-groups"]
+					json["release-groups"]
+				elsif json["releases"]
+					json["releases"]
+				elsif json["recording"]
+					json["recording"]
+				elsif json["work"]
+					json["work"]
+				else
+					json
+				end
 			else
 				json
 			end
