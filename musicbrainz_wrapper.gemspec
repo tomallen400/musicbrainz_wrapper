@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = MusicbrainzWrapper::VERSION
   spec.authors       = ["tomallen400"]
   spec.email         = ["tomallen4000@gmail.com"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
+  spec.description   = "A object orientated gem for the Musizbrainz API"
+  spec.summary       = "A object orientated gem for the Musizbrainz API"
   spec.homepage      = ""
   spec.license       = "MIT"
 
