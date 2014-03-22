@@ -1,6 +1,6 @@
 class Musicbrainz::Release
 	
-	attr_accessor :id, :title, :score, :count, :status, :text_representation, :artist_credit, :release_group, :area, :date, :country, :release_events, :label_info, :barcode, :asin, :track_count, :media, :cover_art_archive, :quality, :relations
+	attr_accessor :id, :title, :score, :count, :status, :text_representation, :artist_credit, :release_group, :area, :date, :country, :release_events, :label_info, :barcode, :asin, :track_count, :media, :cover_art_archive, :quality, :relations, :packshot
 	
 	def initialize args
 		args.each do |k, v|

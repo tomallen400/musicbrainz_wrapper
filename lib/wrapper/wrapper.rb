@@ -7,6 +7,7 @@ class Musicbrainz::Wrapper
 	attr_accessor :username, :password
 	
 	@@api_url = "http://musicbrainz.org/ws/2/"
+	@@cover_art_archive_url = "http://archive.org/download/"
 	
 	Dir[File.join(File.dirname(__FILE__), "resources", "*.rb")].each { |file| require file }
 	
@@ -212,6 +213,13 @@ class Musicbrainz::Wrapper
 				json
 			end
   	end
+  end
+  
+  # Cover Art Archive
+  def cover_art_archive_query(id)
+  	query = "#{@@cover_art_archive_url}mbid-#{id}/index.json"
+  	file = open(query).read() rescue nil
+  	json = JSON.parse(file) rescue {}
   end
 
 end
